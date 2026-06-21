@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevOps Assignment - Frontend/Backend Form</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Submit Your Details</h1>
+    <p class="subtitle">Express (Frontend) &rarr; Flask (Backend) &rarr; MongoDB</p>
+
+    <form action="/submit" method="POST">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Enter your name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="4" placeholder="Enter your message"></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <% if (result) { %>
+      <div class="result success">
+        <h3>✅ <%= result.message %></h3>
+        <pre><%= JSON.stringify(result.data, null, 2) %></pre>
+      </div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="result error">
+        <h3>❌ Error</h3>
+        <p><%= error %></p>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

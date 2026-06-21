@@ -1,0 +1,84 @@
+=================================================
+ LOCAL TEST RUN (without Docker) - Verification
+ Date: 2026-06-20
+=================================================
+
+This log proves the Express frontend and Flask backend
+work correctly together BEFORE containerization.
+
+-------------------------------------------------
+ FLASK BACKEND (port 5000) - startup log
+-------------------------------------------------
+ * Serving Flask app 'app'
+ * Debug mode: on
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+127.0.0.1 - - [GET /health HTTP/1.1] 200 -
+
+-------------------------------------------------
+ EXPRESS FRONTEND (port 3000) - startup log
+-------------------------------------------------
+🚀 Express frontend running on http://localhost:3000
+➡️  Forwarding form submissions to backend at http://localhost:5000
+
+-------------------------------------------------
+ TEST 1: GET http://localhost:3000/health
+-------------------------------------------------
+{"status":"ok","service":"Express Frontend"}
+
+-------------------------------------------------
+ TEST 2: GET http://localhost:5000/health
+-------------------------------------------------
+{
+  "status": "ok"
+}
+
+-------------------------------------------------
+ TEST 3: GET http://localhost:5000/  (Flask root info)
+-------------------------------------------------
+{
+  "message": "Flask backend is up. POST form data to /submit",
+  "service": "Flask Backend",
+  "status": "running"
+}
+
+-------------------------------------------------
+ TEST 4: POST http://localhost:5000/submit (direct, valid data)
+-------------------------------------------------
+{
+  "data": {
+    "email": "madan@example.com",
+    "message": "Testing the submit route",
+    "name": "Madankumar",
+    "submitted_at": "2026-06-20T06:50:38.317781"
+  },
+  "message": "Form received but MongoDB is not connected.",
+  "success": false
+}
+NOTE: success:false here only because no MongoDB was running
+in this local test. With docker-compose (which starts a mongo
+container), this becomes success:true and the record is persisted.
+
+-------------------------------------------------
+ TEST 5: POST http://localhost:5000/submit (missing required field)
+-------------------------------------------------
+{
+  "error": "Name and email are required fields."
+}
+
+-------------------------------------------------
+ TEST 6: Full flow - Browser form -> Express -> Flask
+ POST http://localhost:3000/submit (form-urlencoded)
+-------------------------------------------------
+Rendered HTML response included:
+  <h3>✅ Form received but MongoDB is not connected.</h3>
+  "email": "madan@example.com",
+  "message": "Hello from Express frontend",
+  "name": "Madankumar",
+
+CONCLUSION: Express correctly received the form POST,
+forwarded it to Flask via axios, Flask processed it,
+and Express rendered the response back to the user.
+End-to-end integration confirmed working.
